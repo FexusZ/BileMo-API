@@ -2,42 +2,107 @@
 
 namespace App\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Validator\ConstraintViolationListInterface;
 
-class UserController extends AbstractController
+use App\Entity\User;
+use App\Repository\ClientRepository;
+
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
+
+use Symfony\Component\Validator\Validator\ValidatorInterface;
+
+use FOS\RestBundle\Controller\Annotations as Rest; 
+use FOS\RestBundle\Controller\AbstractFOSRestController;
+
+use JMS\Serializer\SerializerInterface;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
+
+// use Knp\Component\Pager\PaginatorInterface;
+
+
+use \App\Service\Paginate;
+
+
+class UserController extends AbstractFOSRestController
 {
-    /**
-     * @Route("/user", name="user.list", methods={"GET"})
-     */
-    public function user_list(): Response
+
+    public function __construct()
     {
-    	// To do...
+        
+    }
+    /**
+     * @Rest\Get("/users", name="user.list")
+     *
+     * @Rest\View(serializerGroups={"user:list"}, statusCode=200)
+     */
+    public function userList(Request $request, Paginate $paginator)
+    {
+        return $paginator->paginate(
+            $this->getDoctrine()->getRepository('App:User')->findAll(),
+            $request
+        );
     }
     
     /**
-     * @Route("/user/{id}", name="user.detail", methods={"GET"})
+     * @Rest\Get(
+     *     path = "/user/{id}",
+     *     name = "user.detail",
+     *     requirements = {"id"="\d+"}
+     * )
+     * 
+     * @Rest\View(serializerGroups={"user:details"}, statusCode=200)
      */
-    public function user_detail(): Response
+    public function userDetail(User $user/*, SerializerInterface $serializer*/)
     {
-    	// To do...
+        return $user;
     }
 
     /**
-     * @Route("/user", name="user.create", methods={"POST"})
+     * @Rest\Post(
+     *     path = "/user",
+     *     name = "user.create"
+     * )
+     *
+     * @Rest\View(serializerGroups={"user:details"}, statusCode=201)
+     *
+     * @ParamConverter("user", converter="fos_rest.request_body")
      */
-    public function user_create(): Response
+    public function userCreate(User $user, Request $request, ClientRepository $clientRepository, ConstraintViolationListInterface $violations)
     {
-    	// To do...
+        $client = $clientRepository->findOneBy(['username' => 'test']);
+        $user->setClient($client);
+
+        if (count($violations)) {
+            dd($violations);
+            return $this->view($violations, 404);
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($user);
+        $em->flush();
+
+        return $this->view(
+            $user,
+            201,
+            [
+                'Location' => $this->generateUrl('user.detail', ['id' =>$user->getId()], 0)
+            ]
+        );
     }
 
     /**
-     * @Route("/user/{id}", name="user.delete", methods={"DELETE"})
+     * @Rest\Delete(
+     *     path = "/user/{id}",
+     *     name = "user.delete",
+     *     requirements = {"id"="\d+"}
+     * )
+     *
+     * @Rest\View
      */
-    public function user_delete(): Response
+    public function userDelete()
     {
-    	// To do...
+        // return $this->json(, 200, [], ['groups' => ""]);
     }
 }
