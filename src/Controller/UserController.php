@@ -33,7 +33,7 @@ class UserController extends AbstractFOSRestController
         
     }
     /**
-     * @Rest\Get("/users", name="user.list")
+     * @Rest\Get("/api/users", name="user.list")
      *
      * @Rest\View(serializerGroups={"user:list"}, statusCode=200)
      */
@@ -47,7 +47,7 @@ class UserController extends AbstractFOSRestController
     
     /**
      * @Rest\Get(
-     *     path = "/user/{id}",
+     *     path = "/api/user/{id}",
      *     name = "user.detail",
      *     requirements = {"id"="\d+"}
      * )
@@ -61,7 +61,7 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Post(
-     *     path = "/user",
+     *     path = "/api/user",
      *     name = "user.create"
      * )
      *
@@ -94,7 +94,7 @@ class UserController extends AbstractFOSRestController
 
     /**
      * @Rest\Delete(
-     *     path = "/user/{id}",
+     *     path = "/api/user/{id}",
      *     name = "user.delete",
      *     requirements = {"id"="\d+"}
      * )
