@@ -29,17 +29,6 @@ services:
         tags: ['controller.service_arguments']
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-
-    app.normalizer.resource_validation_exception:
-        class: App\Normalizer\NotFoundHttpExceptionNormalizer
-        arguments:
-            - { type: 'Symfony\Component\HttpKernel\Exception\NotFoundHttpException' }
+    App\Request\ParamConverter\UserConverter:
         tags:
-            - { name: app.normalizer }
-
-    app.exception_subscriber:
-        class: App\EventSubscriber\ExceptionListener
-        arguments:
-            - '@jms_serializer'
-        tags:
-            - { name: kernel.event_subscriber }
+            - { name: 'request.param_converter', converter: "user", priority: 255 }

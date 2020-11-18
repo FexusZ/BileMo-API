@@ -19,11 +19,10 @@ use JMS\Serializer\SerializerInterface;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
+use Symfony\Component\Security\Core\Security;
 // use Knp\Component\Pager\PaginatorInterface;
 
-
 use \App\Service\Paginate;
-
 
 class UserController extends AbstractFOSRestController
 {
@@ -40,7 +39,7 @@ class UserController extends AbstractFOSRestController
     public function userList(Request $request, Paginate $paginator)
     {
         return $paginator->paginate(
-            $this->getDoctrine()->getRepository('App:User')->findAll(),
+            $this->getDoctrine()->getRepository('App:User')->findBy(['client' => $this->getUser()->getId()]),
             $request
         );
     }
@@ -54,7 +53,7 @@ class UserController extends AbstractFOSRestController
      * 
      * @Rest\View(serializerGroups={"user:details"}, statusCode=200)
      */
-    public function userDetail(User $user/*, SerializerInterface $serializer*/)
+    public function userDetail(User $user)
     {
         return $user;
     }
@@ -67,16 +66,17 @@ class UserController extends AbstractFOSRestController
      *
      * @Rest\View(serializerGroups={"user:details"}, statusCode=201)
      *
-     * @ParamConverter("user", converter="fos_rest.request_body")
+     * @ParamConverter("user", converter="user")
      */
-    public function userCreate(User $user, Request $request, ClientRepository $clientRepository, ConstraintViolationListInterface $violations)
+    public function userCreate(User $user, Request $request, ClientRepository $clientRepository, ValidatorInterface $validator)
     {
-        $client = $clientRepository->findOneBy(['username' => 'test']);
-        $user->setClient($client);
+        $errors = $validator->validate($user);
 
-        if (count($violations)) {
-            dd($violations);
-            return $this->view($violations, 404);
+        if (count($errors)) {
+            return $this->view(
+                $errors,
+                404
+            );
         }
 
         $em = $this->getDoctrine()->getManager();
@@ -103,6 +103,22 @@ class UserController extends AbstractFOSRestController
      */
     public function userDelete()
     {
+        // return $this->json(, 200, [], ['groups' => ""]);
+    }
+
+
+    /**
+     * @Rest\Put(
+     *     path = "/api/user/{id}",
+     *     name = "user.update",
+     *     requirements = {"id"="\d+"}
+     * )
+     *
+     * @Rest\View(serializerGroups={"user:details"}, statusCode=200)
+     */
+    public function userUpdate(User $user, Request $request, ClientRepository $clientRepository, ValidatorInterface $validator)
+    {
+        dd($user);
         // return $this->json(, 200, [], ['groups' => ""]);
     }
 }

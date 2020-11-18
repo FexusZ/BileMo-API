@@ -8,14 +8,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 use Symfony\Component\Validator\Constraints as Assert;
-
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use JMS\Serializer\Annotation as Serializer;
 
 use Hateoas\Configuration\Annotation as Hateoas;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
- *
+ * @UniqueEntity(fields={"email"}, message="Email already use")
  * @Hateoas\Relation("_self",
  *      href = @Hateoas\Route("user.detail", parameters = {"id" = "expr(object.getId())"}, absolute = true),
  *      exclusion = @Hateoas\Exclusion(groups={"user:details", "user:list"})
