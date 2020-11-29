@@ -5,7 +5,7 @@ security:
             algorithm: auto
     providers:
         # used to reload user from session & other features (e.g. switch_user)
-        app_user_provider:
+        app_client_provider:
             entity:
                 class: App\Entity\Client
                 property: email
@@ -14,7 +14,7 @@ security:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
         login:
-            pattern:  ^/api/login
+            pattern: ^/api/login
             stateless: true
             anonymous: true
             json_login:
@@ -22,7 +22,7 @@ security:
                 success_handler:          lexik_jwt_authentication.handler.authentication_success
                 failure_handler:          lexik_jwt_authentication.handler.authentication_failure
         api:
-            provider: app_user_provider
+            provider: app_client_provider
             pattern:   ^/api
             stateless: true
             guard:

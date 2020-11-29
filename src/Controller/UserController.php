@@ -4,13 +4,12 @@ namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
+use Symfony\Component\Security\Core\Security;
+use Symfony\Component\Serializer\Exception\NotEncodableValueException;
+use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 use App\Entity\User;
 use App\Repository\ClientRepository;
-
-use Symfony\Component\Serializer\Exception\NotEncodableValueException;
-
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 use FOS\RestBundle\Controller\Annotations as Rest; 
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -19,18 +18,10 @@ use JMS\Serializer\SerializerInterface;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
-use Symfony\Component\Security\Core\Security;
-// use Knp\Component\Pager\PaginatorInterface;
-
-use \App\Service\Paginate;
+use App\Service\Paginate;
 
 class UserController extends AbstractFOSRestController
 {
-
-    public function __construct()
-    {
-        
-    }
     /**
      * @Rest\Get("/api/users", name="user.list")
      *
@@ -43,7 +34,7 @@ class UserController extends AbstractFOSRestController
             $request
         );
     }
-    
+
     /**
      * @Rest\Get(
      *     path = "/api/user/{id}",
@@ -53,7 +44,7 @@ class UserController extends AbstractFOSRestController
      * 
      * @Rest\View(serializerGroups={"user:details"}, statusCode=200)
      */
-    public function userDetail(User $user)
+    public function userDetail(User $user, Request $request)
     {
         return $user;
     }
@@ -68,7 +59,7 @@ class UserController extends AbstractFOSRestController
      *
      * @ParamConverter("user", converter="user")
      */
-    public function userCreate(User $user, Request $request, ClientRepository $clientRepository, ValidatorInterface $validator)
+    public function userCreate(User $user, Request $request, ValidatorInterface $validator)
     {
         $errors = $validator->validate($user);
 
@@ -101,11 +92,14 @@ class UserController extends AbstractFOSRestController
      *
      * @Rest\View
      */
-    public function userDelete()
+    public function userDelete(User $user)
     {
-        // return $this->json(, 200, [], ['groups' => ""]);
-    }
+        $em = $this->getDoctrine()->getManager();
+        $em->remove($user);
+        $em->flush();
 
+        return $this->json("", 204, []);
+    }
 
     /**
      * @Rest\Put(
@@ -116,9 +110,27 @@ class UserController extends AbstractFOSRestController
      *
      * @Rest\View(serializerGroups={"user:details"}, statusCode=200)
      */
-    public function userUpdate(User $user, Request $request, ClientRepository $clientRepository, ValidatorInterface $validator)
+    public function userUpdate(User $user, Request $request, ValidatorInterface $validator)
     {
-        dd($user);
-        // return $this->json(, 200, [], ['groups' => ""]);
+        $errors = $validator->validate($user);
+
+        if (count($errors)) {
+            return $this->view(
+                $errors,
+                404
+            );
+        }
+
+        $em = $this->getDoctrine()->getManager();
+        $em->persist($user);
+        $em->flush();
+
+        return $this->view(
+            $user,
+            200,
+            [
+                'Location' => $this->generateUrl('user.detail', ['id' => $user->getId()], 0)
+            ]
+        );
     }
 }
