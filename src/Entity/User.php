@@ -16,8 +16,16 @@ use Hateoas\Configuration\Annotation as Hateoas;
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
  * @UniqueEntity(fields={"email"}, message="Email already use")
- * @Hateoas\Relation("_self",
+ * @Hateoas\Relation("self",
  *      href = @Hateoas\Route("user.detail", parameters = {"id" = "expr(object.getId())"}, absolute = true),
+ *      exclusion = @Hateoas\Exclusion(groups={"user:details", "user:list"})
+ * )
+ * @Hateoas\Relation("modify",
+ *      href = @Hateoas\Route("user.update", parameters = {"id" = "expr(object.getId())"}, absolute = true),
+ *      exclusion = @Hateoas\Exclusion(groups={"user:details", "user:list"})
+ * )
+ * @Hateoas\Relation("delete",
+ *      href = @Hateoas\Route("user.delete", parameters = {"id" = "expr(object.getId())"}, absolute = true),
  *      exclusion = @Hateoas\Exclusion(groups={"user:details", "user:list"})
  * )
  */
@@ -117,7 +125,7 @@ class User
         return $this;
     }
 
-    private function getClient(): ?Client
+    public function getClient(): ?Client
     {
         return $this->client;
     }
