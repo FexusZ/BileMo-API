@@ -9,7 +9,7 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 use App\Entity\User;
-use App\Repository\ClientRepository;
+use App\Repository\ResellerRepository;
 
 use FOS\RestBundle\Controller\Annotations as Rest; 
 use FOS\RestBundle\Controller\AbstractFOSRestController;
@@ -24,13 +24,12 @@ class UserController extends AbstractFOSRestController
 {
     /**
      * @Rest\Get("/api/users", name="user.list")
-     *
      * @Rest\View(serializerGroups={"user:list"}, statusCode=200)
      */
     public function userList(Request $request, Paginate $paginator)
     {
         return $paginator->paginate(
-            $this->getDoctrine()->getRepository('App:User')->findBy(['client' => $this->getUser()->getId()]),
+            $this->getDoctrine()->getRepository('App:User')->findBy(['reseller' => $this->getUser()->getId()]),
             $request
         );
     }

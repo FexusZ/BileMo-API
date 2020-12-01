@@ -32,3 +32,7 @@ services:
     App\Request\ParamConverter\UserConverter:
         tags:
             - { name: 'request.param_converter', converter: "user", priority: 255 }
+
+    App\Request\ParamConverter\ResellerConverter:
+        tags:
+            - { name: 'request.param_converter', converter: "reseller", priority: 255 }

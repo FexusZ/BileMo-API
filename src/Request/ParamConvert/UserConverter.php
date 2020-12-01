@@ -64,7 +64,7 @@ class UserConverter implements ParamConverterInterface
             $user = $this->put($request, $configuration);
         }
 
-        $user->setPassword($this->encoder->encodePassword($user->getClient(), $user->getPassword()));
+        $user->setPassword($this->encoder->encodePassword($user->getReseller(), $user->getPassword()));
         $request->attributes->set($configuration->getName(), $user);
     }
 
@@ -80,7 +80,7 @@ class UserConverter implements ParamConverterInterface
     public function post(Request $request, ParamConverter $configuration): User
     {
         $user = $this->serializer->deserialize($request->getContent(), $configuration->getClass(), 'json');
-        $user->setClient($this->security->getUser());
+        $user->setReseller($this->security->getUser());
 
         return $user;
     }
@@ -110,7 +110,7 @@ class UserConverter implements ParamConverterInterface
             throw new Exception\NotFoundHttpException('Cannot access, User not found');
         }
 
-        if ($user->getClient() !== $this->security->getUser()) {
+        if ($user->getReseller() !== $this->security->getUser()) {
             throw new Exception\AccessDeniedHttpException('Access denied, User is not yours');
         }
 
