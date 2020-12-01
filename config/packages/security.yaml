@@ -1,13 +1,13 @@
 security:
     # https://symfony.com/doc/current/security.html#where-do-users-come-from-user-providers
     encoders:
-        App\Entity\Client:
+        App\Entity\Reseller:
             algorithm: auto
     providers:
         # used to reload user from session & other features (e.g. switch_user)
-        app_client_provider:
+        app_reseller_provider:
             entity:
-                class: App\Entity\Client
+                class: App\Entity\Reseller
                 property: email
     firewalls:
         dev:
@@ -22,7 +22,7 @@ security:
                 success_handler:          lexik_jwt_authentication.handler.authentication_success
                 failure_handler:          lexik_jwt_authentication.handler.authentication_failure
         api:
-            provider: app_client_provider
+            provider: app_reseller_provider
             pattern:   ^/api
             stateless: true
             guard:

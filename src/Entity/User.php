@@ -78,11 +78,11 @@ class User
     private $password;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Client::class, inversedBy="users")
+     * @ORM\ManyToOne(targetEntity=Reseller::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
      * @Assert\NotBlank
      */
-    private $client;
+    private $reseller;
 
     public function getId(): ?int
     {
@@ -125,14 +125,14 @@ class User
         return $this;
     }
 
-    public function getClient(): ?Client
+    public function getReseller(): ?Reseller
     {
-        return $this->client;
+        return $this->reseller;
     }
 
-    public function setClient(?Client $client): self
+    public function setReseller(?Reseller $reseller): self
     {
-        $this->client = $client;
+        $this->reseller = $reseller;
 
         return $this;
     }
