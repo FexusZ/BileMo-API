@@ -3,22 +3,16 @@
 namespace App\Controller;
 
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Validator\ConstraintViolationListInterface;
-use Symfony\Component\Security\Core\Security;
-use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 use App\Entity\User;
-use App\Repository\ResellerRepository;
+use App\Service\Paginate;
 
-use FOS\RestBundle\Controller\Annotations as Rest; 
+use FOS\RestBundle\Controller\Annotations as Rest;
 use FOS\RestBundle\Controller\AbstractFOSRestController;
-
-use JMS\Serializer\SerializerInterface;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
-use App\Service\Paginate;
 
 class UserController extends AbstractFOSRestController
 {
