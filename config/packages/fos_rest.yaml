@@ -29,8 +29,6 @@ fos_rest:
             - { path: '^/', priorities: ['json'], fallback_format: 'json'}
     exception:
         enabled: true
-        codes:
-            'Symfony\Component\Routing\Exception\ResourceNotFoundException': 404
 
 # Read the documentation: https://symfony.com/doc/master/bundles/FOSRestBundle/index.html
 # fos_rest:
