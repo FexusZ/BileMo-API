@@ -1,0 +1,107 @@
+openapi: 3.0.0
+info:
+  title: BileMo-API
+  version: '1'
+servers:
+  -
+    url: 'https://127.0.0.1:8000'
+    description: 'Dev Server'
+paths:
+  /api/products:
+    get:
+      tags:
+        - product
+      summary: 'Get product list'
+      description: 'Get product list'
+      operationId: 'App\Controller\ProductController::productList'
+      parameters:
+        -
+          name: limit
+          in: query
+          description: 'limit of item per page'
+          required: false
+          schema:
+            type: integer
+            format: int
+        -
+          name: page
+          in: query
+          description: 'page of item'
+          required: false
+          schema:
+            type: integer
+            format: int
+      responses:
+        '200':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+              example:
+                items:
+                  id: 1
+                  name: phone1
+                  _links: { self: { href: 'https://127.0.0.1:8000/api/product/1' } }
+                items_per_page: 25
+                total_items: 1
+                current_page: 1
+      security:
+        -
+          bearer: []
+  '/api/product/{id}':
+    get:
+      tags:
+        - product
+      summary: 'Get product detail'
+      description: 'Get product detail'
+      operationId: 'App\Controller\ProductController::productDetail'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'Id of product to return'
+          required: true
+          schema:
+            type: integer
+            format: int
+      responses:
+        '200':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+              example:
+                id: 1
+                name: phone1
+                description: 'phone1 description'
+                price: '299.99'
+                year: '2020'
+      security:
+        -
+          bearer: []
+components:
+  schemas:
+    Product:
+      title: Product
+      description: 'Product model'
+      properties:
+        name:
+          description: 'Product Name'
+          format: string
+        description:
+          description: 'Product description'
+          format: string
+        price:
+          description: 'Product price'
+          format: float
+        year:
+          description: 'Product year'
+          format: integer
+      type: object
+  securitySchemes:
+    bearer:
+      type: http
+      bearerFormat: JWT
+      scheme: bearer

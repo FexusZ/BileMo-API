@@ -71,6 +71,8 @@ class ResellerConverter implements ParamConverterInterface
 
     public function post(Request $request, ParamConverter $configuration): Reseller
     {
+        dd($this->serializer->deserialize($request->getContent(), $configuration->getClass(), 'json'));
+        
         $reseller = $this->serializer->deserialize($request->getContent(), $configuration->getClass(), 'json');
         return $reseller;
     }

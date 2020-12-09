@@ -3,10 +3,14 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Groups;
+
 use Hateoas\Configuration\Annotation as Hateoas;
+
 use JMS\Serializer\Annotation as Serializer;
+
+use OpenApi\Annotations as OA;
 
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
@@ -14,6 +18,10 @@ use JMS\Serializer\Annotation as Serializer;
  * @Hateoas\Relation("self",
  *      href = @Hateoas\Route("product.details", parameters = {"id" = "expr(object.getId())"}, absolute = true),
  *      exclusion = @Hateoas\Exclusion(groups={"product:details", "product:list"})
+ * )
+ * @OA\Schema(
+ *      description="Product model",
+ *      title="Product",
  * )
  */
 class Product
@@ -29,24 +37,40 @@ class Product
     /**
      * @ORM\Column(type="string", length=255)
      * @Serializer\Groups({"product:list","product:details"})
+     * @OA\Property(
+     *     format="string",
+     *     description="Product Name",
+     * )
      */
     private $name;
 
     /**
      * @ORM\Column(type="text")
      * @Serializer\Groups({"product:details"})
+     * @OA\Property(
+     *     format="string",
+     *     description="Product description",
+     * )
      */
     private $description;
 
     /**
      * @ORM\Column(type="float")
      * @Serializer\Groups({"product:details"})
+     * @OA\Property(
+     *     format="float",
+     *     description="Product price",
+     * )
      */
     private $price;
 
     /**
      * @ORM\Column(type="integer")
      * @Serializer\Groups({"product:details"})
+     * @OA\Property(
+     *     format="integer",
+     *     description="Product year",
+     * )
      */
     private $year;
 

@@ -80,9 +80,7 @@ class Paginate
 			'items' => $paginator->getItems(),
 			'items_per_page' => $paginator->getItemNumberPerPage(),
 			'total_items' => $paginator->getTotalItemCount(),
-			'previous_page' => '',
 			'current_page' => $paginator->getCurrentPageNumber(),
-			'next_page' => '',
 		];
 
 		if ($paginator->getCurrentPageNumber() > 1) {
