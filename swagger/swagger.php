@@ -10,7 +10,6 @@ use OpenApi\Annotations as OA;
  * )
  * 
  * @OA\Post(
- *     security={{"bearer":{}}},
  *     path="/api/login_check",
  *     tags={"Token"},
  *     summary="Get JWT token",
