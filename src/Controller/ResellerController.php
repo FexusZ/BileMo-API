@@ -69,7 +69,6 @@ class ResellerController extends AbstractFOSRestController
      * @ParamConverter("reseller", converter="reseller")
      *
      * @OA\Post(
-     *     security={{"bearer":{}}},
      *     path="/create/reseller",
      *     tags={"Reseller"},
      *     summary="Create reseller",

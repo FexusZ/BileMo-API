@@ -224,9 +224,6 @@ paths:
               schema: {  }
               example:
                 message: 'Bad request. Check your parameters'
-      security:
-        -
-          bearer: []
   /api/users:
     get:
       tags:
@@ -559,9 +556,6 @@ paths:
               example:
                 code: '401'
                 message: 'Invalid credentials'
-      security:
-        -
-          bearer: []
 components:
   schemas:
     Product:
