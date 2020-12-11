@@ -32,6 +32,18 @@ use OpenApi\Annotations as OA;
  *      href = @Hateoas\Route("user.create", absolute = true),
  *      exclusion = @Hateoas\Exclusion(groups={"reseller:details"})
  * )
+ *
+ * @OA\Schema(
+ *      description="Reseller model",
+ *      title="Reseller",
+ * )
+ * @OA\Schema(
+ *    schema = "ResellerDetail",
+ *    description = "ResellerDetail",
+ *     @OA\Property(type = "integer", property = "id"),
+ *     @OA\Property(type = "string", property = "email"),
+ *     @OA\Property(type = "string", property = "password"),
+ * )
  */
 class Reseller implements UserInterface
 {
@@ -40,23 +52,39 @@ class Reseller implements UserInterface
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Serializer\Groups({"reseller:details"})
+     * @OA\Property(
+     *     format="integer",
+     *     description="Id",
+     * )
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Serializer\Groups({"reseller:details"})
+     * @OA\Property(
+     *     format="string",
+     *     description="Reseller email",
+     * )
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Serializer\Groups({"reseller:details"})
+     * @OA\Property(
+     *     format="string",
+     *     description="Reseller password",
+     * )
      */
     private $password;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="reseller", orphanRemoval=true)
+     * @OA\Property(
+     *     ref="#/components/schemas/User",
+     *     description="users Model",
+     * )
      */
     private $users;
 

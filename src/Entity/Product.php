@@ -23,6 +23,22 @@ use OpenApi\Annotations as OA;
  *      description="Product model",
  *      title="Product",
  * )
+ * @OA\Schema(
+ *    schema = "ProductDetail",
+ *    description = "PostDetail",
+ *     @OA\Property(type = "integer", property = "id"),
+ *     @OA\Property(type = "string", property = "name"),
+ *     @OA\Property(type = "string", property = "description"),
+ *     @OA\Property(type = "float", property = "price"),
+ *     @OA\Property(type = "integer", property = "year")
+ * )
+ *
+ * @OA\Schema(
+ *    schema = "ProductList",
+ *    description = "PostList",
+ *     @OA\Property(type="integer", property="id"),
+ *     @OA\Property(type="string", property="name")
+ * )
  */
 class Product
 {
@@ -31,6 +47,10 @@ class Product
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Serializer\Groups({"product:list","product:details"})
+     * @OA\Property(
+     *     format="int",
+     *     description="Id",
+     * )
      */
     private $id;
 

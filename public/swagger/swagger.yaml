@@ -10,7 +10,7 @@ paths:
   /api/products:
     get:
       tags:
-        - product
+        - Product
       summary: 'Get product list'
       description: 'Get product list'
       operationId: 'App\Controller\ProductController::productList'
@@ -18,7 +18,7 @@ paths:
         -
           name: limit
           in: query
-          description: 'limit of item per page'
+          description: 'item limit per page (1 to 25), default 25'
           required: false
           schema:
             type: integer
@@ -26,7 +26,7 @@ paths:
         -
           name: page
           in: query
-          description: 'page of item'
+          description: 'current items page, default 1'
           required: false
           schema:
             type: integer
@@ -37,7 +37,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'
+                $ref: '#/components/schemas/ProductList'
               example:
                 items:
                   id: 1
@@ -46,13 +46,35 @@ paths:
                 items_per_page: 25
                 total_items: 1
                 current_page: 1
+        '401':
+          description: 'Bearer token missing'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                code: '401'
+                message: 'JWT Token not found'
+        '400':
+          description: 'Invalid input'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                message: 'Bad request. Check your parameters'
+        '404':
+          description: 'Products not found'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                message: 'no data'
       security:
         -
           bearer: []
   '/api/product/{id}':
     get:
       tags:
-        - product
+        - Product
       summary: 'Get product detail'
       description: 'Get product detail'
       operationId: 'App\Controller\ProductController::productDetail'
@@ -60,7 +82,7 @@ paths:
         -
           name: id
           in: path
-          description: 'Id of product to return'
+          description: 'Product ID to return'
           required: true
           schema:
             type: integer
@@ -71,13 +93,472 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'
+                $ref: '#/components/schemas/ProductDetail'
               example:
                 id: 1
                 name: phone1
                 description: 'phone1 description'
                 price: '299.99'
                 year: '2020'
+                _links:
+                  self: { href: 'https://127.0.0.1:8000/api/product/1' }
+        '404':
+          description: 'User not found'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                message: 'Cannot access, Product not found'
+        '401':
+          description: 'Bearer token missing'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                code: '401'
+                message: 'JWT Token not found'
+      security:
+        -
+          bearer: []
+  /api/reseller:
+    get:
+      tags:
+        - Reseller
+      summary: 'Get reseller detail'
+      description: 'Get reseller detail'
+      operationId: 'App\Controller\ResellerController::resellerInfo'
+      responses:
+        '200':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResellerDetail'
+              example:
+                id: 1
+                email: test@email.fr
+                password: test
+                _links:
+                  self: { href: 'https://127.0.0.1:8000/api/reseller' }
+                  delete: { href: 'https://127.0.0.1:8000/api/reseller' }
+                  create_user: { href: 'https://127.0.0.1:8000/api/user' }
+        '401':
+          description: 'Bearer token missing'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                code: '401'
+                message: 'JWT Token not found'
+      security:
+        -
+          bearer: []
+    delete:
+      tags:
+        - Reseller
+      summary: 'Delete reseller'
+      description: 'Delete reseller'
+      operationId: 'App\Controller\ResellerController::resellerDelete'
+      responses:
+        '204':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                format: string
+              example:
+                - ''
+        '401':
+          description: 'Bearer token missing'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                code: '401'
+                message: 'JWT Token not found'
+      security:
+        -
+          bearer: []
+  /create/reseller:
+    post:
+      tags:
+        - Reseller
+      summary: 'Create reseller'
+      description: 'Create reseller'
+      operationId: 'App\Controller\ResellerController::resellerCreate'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  description: 'User email'
+                  type: string
+                password:
+                  description: 'User passord'
+                  type: string
+              type: object
+              example:
+                email: test@email.fr
+                password: test
+      responses:
+        '201':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ResellerDetail'
+              example:
+                id: 1
+                email: test@email.fr
+                password: test
+                _links:
+                  self: { href: 'https://127.0.0.1:8000/api/reseller' }
+                  delete: { href: 'https://127.0.0.1:8000/api/reseller' }
+                  create_user: { href: 'https://127.0.0.1:8000/api/user' }
+        '400':
+          description: 'Invalid input, or duplicate Reseller'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                message: 'Bad request. Check your parameters'
+      security:
+        -
+          bearer: []
+  /api/users:
+    get:
+      tags:
+        - User
+      summary: 'Get user list'
+      description: 'Get user list'
+      operationId: 'App\Controller\UserController::userList'
+      parameters:
+        -
+          name: limit
+          in: query
+          description: 'item limit per page (1 to 25), default 25'
+          required: false
+          schema:
+            type: integer
+            format: int
+        -
+          name: page
+          in: query
+          description: 'current items page, default 1'
+          required: false
+          schema:
+            type: integer
+            format: int
+      responses:
+        '200':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserList'
+              example:
+                items:
+                  id: 1
+                  email: test
+                  _links: { self: { href: 'https://127.0.0.1:8000/api/user/2' }, modify: { href: 'https://127.0.0.1:8000/api/user/2' }, delete: { href: 'https://127.0.0.1:8000/api/user/2' } }
+                items_per_page: 25
+                total_items: 1
+                current_page: 1
+        '401':
+          description: 'Bearer token missing'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                code: '401'
+                message: 'JWT Token not found'
+        '400':
+          description: 'Invalid input'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                message: 'Bad request. Check your parameters'
+        '404':
+          description: 'Users not found'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                message: 'no data'
+      security:
+        -
+          bearer: []
+  '/api/user/{id}':
+    get:
+      tags:
+        - User
+      summary: 'Get user detail'
+      description: 'Get user detail'
+      operationId: 'App\Controller\UserController::userDetail'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'User ID to return'
+          required: true
+          schema:
+            type: integer
+            format: int
+      responses:
+        '200':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+              example:
+                id: 1
+                email: test@email.fr
+                username: test
+                password: test
+                _links:
+                  self: { href: 'https://127.0.0.1:8000/api/user/2' }
+                  modify: { href: 'https://127.0.0.1:8000/api/user/2' }
+                  delete: { href: 'https://127.0.0.1:8000/api/user/2' }
+        '401':
+          description: 'Bearer token missing'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                code: '401'
+                message: 'JWT Token not found'
+        '404':
+          description: 'User not found'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                message: 'Cannot access, User not found'
+      security:
+        -
+          bearer: []
+    put:
+      tags:
+        - User
+      summary: 'Modify user'
+      description: 'Modify user'
+      operationId: 'App\Controller\UserController::userUpdate'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'User ID to modify'
+          required: true
+          schema:
+            type: integer
+            format: int
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  description: 'User email'
+                  type: string
+                username:
+                  description: 'User name'
+                  type: string
+                password:
+                  description: 'User passord'
+                  type: string
+              type: object
+              example:
+                email: test@email.fr
+                username: test
+                password: test
+      responses:
+        '200':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+              example:
+                id: 1
+                email: test@email.fr
+                username: test
+                password: test
+                _links:
+                  self: { href: 'https://127.0.0.1:8000/api/user/2' }
+                  modify: { href: 'https://127.0.0.1:8000/api/user/2' }
+                  delete: { href: 'https://127.0.0.1:8000/api/user/2' }
+        '401':
+          description: 'Bearer token missing'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                code: '401'
+                message: 'JWT Token not found'
+        '400':
+          description: 'Invalid input'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                message: 'Bad request. Check your parameters'
+        '404':
+          description: 'User not found'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                message: 'Cannot access, User not found'
+      security:
+        -
+          bearer: []
+    delete:
+      tags:
+        - User
+      summary: 'Remove user'
+      description: 'Remove user'
+      operationId: 'App\Controller\UserController::userDelete'
+      parameters:
+        -
+          name: id
+          in: path
+          description: 'User ID to remove'
+          required: true
+          schema:
+            type: integer
+            format: int
+      responses:
+        '204':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                format: string
+              example:
+                - ''
+        '401':
+          description: 'Bearer token missing'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                code: '401'
+                message: 'JWT Token not found'
+        '404':
+          description: 'User not found'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                message: 'Cannot access, User not found'
+      security:
+        -
+          bearer: []
+  /api/user:
+    post:
+      tags:
+        - User
+      summary: 'Create user'
+      description: 'Create user'
+      operationId: 'App\Controller\UserController::userCreate'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  description: 'User email'
+                  type: string
+                username:
+                  description: 'User name'
+                  type: string
+                password:
+                  description: 'User passord'
+                  type: string
+              type: object
+              example:
+                email: test@email.fr
+                username: test
+                password: test
+      responses:
+        '201':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserDetail'
+              example:
+                id: 1
+                email: test@email.fr
+                username: test
+                password: test
+                _links:
+                  self: { href: 'https://127.0.0.1:8000/api/user/2' }
+                  modify: { href: 'https://127.0.0.1:8000/api/user/2' }
+                  delete: { href: 'https://127.0.0.1:8000/api/user/2' }
+        '401':
+          description: 'Bearer token missing'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                code: '401'
+                message: 'JWT Token not found'
+        '400':
+          description: 'Invalid input, or duplicate user'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                message: 'Bad request. Check your parameters'
+      security:
+        -
+          bearer: []
+  /api/login_check:
+    post:
+      tags:
+        - Token
+      summary: 'Get JWT token'
+      description: 'Get JWT token'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                username:
+                  description: 'Reseller email'
+                  type: string
+                password:
+                  description: 'Reseller password'
+                  type: string
+              type: object
+              example:
+                username: test@email.fr
+                password: test
+      responses:
+        '200':
+          description: 'Successful operation'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Token'
+              example:
+                token: token..
+        '401':
+          description: 'Invalid credentials'
+          content:
+            application/json:
+              schema: {  }
+              example:
+                code: '401'
+                message: 'Invalid credentials'
       security:
         -
           bearer: []
@@ -87,6 +568,9 @@ components:
       title: Product
       description: 'Product model'
       properties:
+        id:
+          description: Id
+          format: int
         name:
           description: 'Product Name'
           format: string
@@ -99,6 +583,99 @@ components:
         year:
           description: 'Product year'
           format: integer
+      type: object
+    ProductDetail:
+      description: PostDetail
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: string
+        price:
+          type: float
+        year:
+          type: integer
+      type: object
+    ProductList:
+      description: PostList
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+      type: object
+    Reseller:
+      title: Reseller
+      description: 'Reseller model'
+      properties:
+        id:
+          description: Id
+          format: integer
+        email:
+          description: 'Reseller email'
+          format: string
+        password:
+          description: 'Reseller password'
+          format: string
+        users:
+          $ref: '#/components/schemas/User'
+      type: object
+    ResellerDetail:
+      description: ResellerDetail
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        password:
+          type: string
+      type: object
+    User:
+      title: User
+      description: 'User model'
+      properties:
+        id:
+          description: Id
+          format: integer
+        email:
+          description: 'User email'
+          format: string
+        username:
+          description: 'User username'
+          format: string
+        password:
+          description: 'User password'
+          format: string
+        reseller:
+          $ref: '#/components/schemas/Reseller'
+      type: object
+    UserDetail:
+      description: UserDetail
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        username:
+          type: string
+        password:
+          type: string
+      type: object
+    UserList:
+      description: UserList
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+      type: object
+    Token:
+      description: 'Token JWT'
+      properties:
+        token:
+          type: string
       type: object
   securitySchemes:
     bearer:

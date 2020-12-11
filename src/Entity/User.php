@@ -30,6 +30,26 @@ use OpenApi\Annotations as OA;
  *      href = @Hateoas\Route("user.delete", parameters = {"id" = "expr(object.getId())"}, absolute = true),
  *      exclusion = @Hateoas\Exclusion(groups={"user:details", "user:list"})
  * )
+ *
+ * @OA\Schema(
+ *      description="User model",
+ *      title="User",
+ * )
+ * @OA\Schema(
+ *    schema = "UserDetail",
+ *    description = "UserDetail",
+ *     @OA\Property(type = "integer", property = "id"),
+ *     @OA\Property(type = "string", property = "email"),
+ *     @OA\Property(type = "string", property = "username"),
+ *     @OA\Property(type = "string", property = "password")
+ * )
+ *
+ * @OA\Schema(
+ *    schema = "UserList",
+ *    description = "UserList",
+ *     @OA\Property(type="integer", property="id"),
+ *     @OA\Property(type="string", property="email")
+ * )
  */
 class User
 {
@@ -38,6 +58,10 @@ class User
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Serializer\Groups({"user:list", "user:details"})
+     * @OA\Property(
+     *     format="integer",
+     *     description="Id",
+     * )
      */
     private $id;
 
@@ -46,6 +70,10 @@ class User
      * @Assert\NotBlank
      * @Assert\Email
      * @Serializer\Groups({"user:list", "user:details"})
+     * @OA\Property(
+     *     format="string",
+     *     description="User email",
+     * )
      */
     private $email;
 
@@ -54,6 +82,10 @@ class User
      * @Assert\NotBlank
      * @Assert\Length(min=3)
      * @Serializer\Groups({"user:details"})
+     * @OA\Property(
+     *     format="string",
+     *     description="User username",
+     * )
      */
     private $username;
 
@@ -62,6 +94,10 @@ class User
      * @Assert\NotBlank
      * @Assert\Length(min=3)
      * @Serializer\Groups({"user:details"})
+     * @OA\Property(
+     *     format="string",
+     *     description="User password",
+     * )
      */
     private $password;
 
@@ -69,6 +105,10 @@ class User
      * @ORM\ManyToOne(targetEntity=Reseller::class, inversedBy="users")
      * @ORM\JoinColumn(nullable=false)
      * @Assert\NotBlank
+     * @OA\Property(
+     *     ref="#/components/schemas/Reseller",
+     *     description="Reseller model",
+     * )
      */
     private $reseller;
 

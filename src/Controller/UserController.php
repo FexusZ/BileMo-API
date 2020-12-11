@@ -13,12 +13,89 @@ use FOS\RestBundle\Controller\AbstractFOSRestController;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
+use OpenApi\Annotations as OA;
 
 class UserController extends AbstractFOSRestController
 {
     /**
      * @Rest\Get("/api/users", name="user.list")
      * @Rest\View(serializerGroups={"user:list"}, statusCode=200)
+     *
+     * @OA\Get(
+     *     security={{"bearer":{}}},
+     *     path="/api/users",
+     *     tags={"User"},
+     *     summary="Get user list",
+     *     description="Get user list",
+     *     @OA\Parameter(
+     *          name="limit",
+     *          in="query",
+     *          description="item limit per page (1 to 25), default 25",
+     *          required=false,
+     *          @OA\Schema(
+     *              type="integer",
+     *              format="int"
+     *          )
+     *     ),
+     *     @OA\Parameter(
+     *          name="page",
+     *          in="query",
+     *          description="current items page, default 1",
+     *          required=false,
+     *          @OA\Schema(
+     *              type="integer",
+     *              format="int"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             ref="#/components/schemas/UserList",
+     *             example={
+     *                 "items": {
+     *                     "id": 1,
+     *                     "email": "test",
+     *                     "_links": {
+     *                         "self": {
+     *                             "href": "https://127.0.0.1:8000/api/user/2"
+     *                         },
+     *                         "modify": {
+     *                             "href": "https://127.0.0.1:8000/api/user/2"
+     *                         },
+     *                         "delete": {
+     *                             "href": "https://127.0.0.1:8000/api/user/2"
+     *                         }
+     *                     }
+     *                 },
+     *                 "items_per_page": 25,
+     *                 "total_items": 1,
+     *                 "current_page": 1
+     *             },
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Bearer token missing",
+     *         @OA\JsonContent(
+     *             example={"code": "401", "message": "JWT Token not found"},
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *        response=400,
+     *        description="Invalid input",
+     *         @OA\JsonContent(
+     *             example={"message": "Bad request. Check your parameters"},
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *        response=404,
+     *        description="Users not found",
+     *         @OA\JsonContent(
+     *             example={"message": "no data"},
+     *         ),
+     *     ),
+     * )
      */
     public function userList(Request $request, Paginate $paginator)
     {
@@ -36,6 +113,62 @@ class UserController extends AbstractFOSRestController
      * )
      * 
      * @Rest\View(serializerGroups={"user:details"}, statusCode=200)
+     *
+     * @OA\Get(
+     *     security={{"bearer":{}}},
+     *     path="/api/user/{id}",
+     *     tags={"User"},
+     *     summary="Get user detail",
+     *     description="Get user detail",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          description="User ID to return",
+     *          required=true,
+     *          @OA\Schema(
+     *              type="integer",
+     *              format="int"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             ref="#/components/schemas/UserDetail",
+     *             example={
+     *                 "id": 1,
+     *                 "email": "test@email.fr",
+     *                 "username": "test",
+     *                 "password": "test",
+     *                 "_links": {
+     *                     "self": {
+     *                         "href": "https://127.0.0.1:8000/api/user/2"
+     *                     },
+     *                     "modify": {
+     *                         "href": "https://127.0.0.1:8000/api/user/2"
+     *                     },
+     *                     "delete": {
+     *                         "href": "https://127.0.0.1:8000/api/user/2"
+     *                     }
+     *                 }
+     *             },
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Bearer token missing",
+     *          @OA\JsonContent(
+     *              example={"code": "401", "message": "JWT Token not found"},
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *        response=404,
+     *        description="User not found",
+     *         @OA\JsonContent(
+     *             example={"message": "Cannot access, User not found"},
+     *         ),
+     *     ),
+     * )
      */
     public function userDetail(User $user, Request $request)
     {
@@ -51,6 +184,77 @@ class UserController extends AbstractFOSRestController
      * @Rest\View(serializerGroups={"user:details"}, statusCode=201)
      *
      * @ParamConverter("user", converter="user")
+     *
+     * @OA\Post(
+     *     security={{"bearer":{}}},
+     *     path="/api/user",
+     *     tags={"User"},
+     *     summary="Create user",
+     *     description="Create user",
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="email",
+     *                     description="User email",
+     *                     type="string",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="username",
+     *                     description="User name",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="password",
+     *                     description="User passord",
+     *                     type="string"
+     *                 ),
+     *                 example={"email": "test@email.fr", "username": "test", "password": "test"}
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response="201",
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             ref="#/components/schemas/UserDetail",
+     *             example={
+     *                 "id": 1,
+     *                 "email": "test@email.fr",
+     *                 "username": "test",
+     *                 "password": "test",
+     *                 "_links": {
+     *                     "self": {
+     *                         "href": "https://127.0.0.1:8000/api/user/2"
+     *                     },
+     *                     "modify": {
+     *                         "href": "https://127.0.0.1:8000/api/user/2"
+     *                     },
+     *                     "delete": {
+     *                         "href": "https://127.0.0.1:8000/api/user/2"
+     *                     }
+     *                 }
+     *             },
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Bearer token missing",
+     *          @OA\JsonContent(
+     *              example={"code": "401", "message": "JWT Token not found"},
+     *          ),
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Invalid input, or duplicate user",
+     *          @OA\JsonContent(
+     *              example={"message": "Bad request. Check your parameters"},
+     *          ),
+     *     ),
+     * )
      */
     public function userCreate(User $user, Request $request, ValidatorInterface $validator)
     {
@@ -59,7 +263,7 @@ class UserController extends AbstractFOSRestController
         if (count($errors)) {
             return $this->view(
                 $errors,
-                404
+                400
             );
         }
 
@@ -84,6 +288,48 @@ class UserController extends AbstractFOSRestController
      * )
      *
      * @Rest\View
+     *
+     * @OA\Delete(
+     *     security={{"bearer":{}}},
+     *     path="/api/user/{id}",
+     *     tags={"User"},
+     *     summary="Remove user",
+     *     description="Remove user",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          description="User ID to remove",
+     *          required=true,
+     *          @OA\Schema(
+     *              type="integer",
+     *              format="int"
+     *          )
+     *     ),
+     *     @OA\Response(
+     *         response="204",
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             format="string",
+     *             example={
+     *                 ""
+     *             },
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Bearer token missing",
+     *          @OA\JsonContent(
+     *              example={"code": "401", "message": "JWT Token not found"},
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *        response=404,
+     *        description="User not found",
+     *         @OA\JsonContent(
+     *             example={"message": "Cannot access, User not found"},
+     *         ),
+     *     ),
+     * )
      */
     public function userDelete(User $user)
     {
@@ -102,6 +348,94 @@ class UserController extends AbstractFOSRestController
      * )
      *
      * @Rest\View(serializerGroups={"user:details"}, statusCode=200)
+     *
+     * @OA\Put(
+     *     security={{"bearer":{}}},
+     *     path="/api/user/{id}",
+     *     tags={"User"},
+     *     summary="Modify user",
+     *     description="Modify user",
+     *     @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          description="User ID to modify",
+     *          required=true,
+     *          @OA\Schema(
+     *              type="integer",
+     *              format="int"
+     *          )
+     *     ),
+     *      @OA\RequestBody(
+     *         required=true,
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *                 @OA\Property(
+     *                     property="email",
+     *                     description="User email",
+     *                     type="string",
+     *                 ),
+     *                 @OA\Property(
+     *                     property="username",
+     *                     description="User name",
+     *                     type="string"
+     *                 ),
+     *                 @OA\Property(
+     *                     property="password",
+     *                     description="User passord",
+     *                     type="string"
+     *                 ),
+     *                 example={"email": "test@email.fr", "username": "test", "password": "test"}
+     *             ),
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *         response="200",
+     *         description="Successful operation",
+     *         @OA\JsonContent(
+     *             ref="#/components/schemas/UserDetail",
+     *             example={
+     *                 "id": 1,
+     *                 "email": "test@email.fr",
+     *                 "username": "test",
+     *                 "password": "test",
+     *                 "_links": {
+     *                     "self": {
+     *                         "href": "https://127.0.0.1:8000/api/user/2"
+     *                     },
+     *                     "modify": {
+     *                         "href": "https://127.0.0.1:8000/api/user/2"
+     *                     },
+     *                     "delete": {
+     *                         "href": "https://127.0.0.1:8000/api/user/2"
+     *                     }
+     *                 }
+     *             },
+     *         ),
+     *     ),
+     *     @OA\Response(
+     *          response=401,
+     *          description="Bearer token missing",
+     *          @OA\JsonContent(
+     *              example={"code": "401", "message": "JWT Token not found"},
+     *          ),
+     *      ),
+     *      @OA\Response(
+     *         response=400,
+     *         description="Invalid input",
+     *          @OA\JsonContent(
+     *              example={"message": "Bad request. Check your parameters"},
+     *          ),
+     *     ),
+     *     @OA\Response(
+     *        response=404,
+     *        description="User not found",
+     *         @OA\JsonContent(
+     *             example={"message": "Cannot access, User not found"},
+     *         ),
+     *     ),
+     * )
      */
     public function userUpdate(User $user, Request $request, ValidatorInterface $validator)
     {
@@ -110,7 +444,7 @@ class UserController extends AbstractFOSRestController
         if (count($errors)) {
             return $this->view(
                 $errors,
-                404
+                400
             );
         }
 

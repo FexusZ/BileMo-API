@@ -53,12 +53,12 @@ class Paginate
 		if ($limit > $this->param->get('limit')) {
 			$this->limit =  View::create(
 				['error' => 'The \'limit\' parameter cannot exceed ' . $this->param->get('limit')],
-				404
+				400
 			);
 		} elseif ($limit < 1) {
 			$this->limit = View::create(
 				['error' => 'The \'limit\' parameter cannot be less than 1'],
-				404
+				400
 			);
 		} else {
 			return false;
