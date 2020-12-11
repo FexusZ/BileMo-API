@@ -2,16 +2,20 @@
 
 namespace App\Entity;
 
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
-use Hateoas\Configuration\Annotation as Hateoas;
-use Symfony\Component\Serializer\Annotation\Groups;
-
 use App\Repository\ResellerRepository;
+
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\UserInterface;
+
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
+
 use JMS\Serializer\Annotation as Serializer;
+
+use Hateoas\Configuration\Annotation as Hateoas;
+
+use OpenApi\Annotations as OA;
 
 /**
  * @ORM\Entity(repositoryClass=ResellerRepository::class)
@@ -28,6 +32,18 @@ use JMS\Serializer\Annotation as Serializer;
  *      href = @Hateoas\Route("user.create", absolute = true),
  *      exclusion = @Hateoas\Exclusion(groups={"reseller:details"})
  * )
+ *
+ * @OA\Schema(
+ *      description="Reseller model",
+ *      title="Reseller",
+ * )
+ * @OA\Schema(
+ *    schema = "ResellerDetail",
+ *    description = "ResellerDetail",
+ *     @OA\Property(type = "integer", property = "id"),
+ *     @OA\Property(type = "string", property = "email"),
+ *     @OA\Property(type = "string", property = "password"),
+ * )
  */
 class Reseller implements UserInterface
 {
@@ -35,27 +51,40 @@ class Reseller implements UserInterface
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"reseller:details"})
      * @Serializer\Groups({"reseller:details"})
+     * @OA\Property(
+     *     format="integer",
+     *     description="Id",
+     * )
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"reseller:details"})
      * @Serializer\Groups({"reseller:details"})
+     * @OA\Property(
+     *     format="string",
+     *     description="Reseller email",
+     * )
      */
     private $email;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"reseller:details"})
      * @Serializer\Groups({"reseller:details"})
+     * @OA\Property(
+     *     format="string",
+     *     description="Reseller password",
+     * )
      */
     private $password;
 
     /**
      * @ORM\OneToMany(targetEntity=User::class, mappedBy="reseller", orphanRemoval=true)
+     * @OA\Property(
+     *     ref="#/components/schemas/User",
+     *     description="users Model",
+     * )
      */
     private $users;
 

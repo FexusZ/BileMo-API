@@ -106,12 +106,8 @@ class UserConverter implements ParamConverterInterface
             ->find($request->attributes->get("id"))
         ;
 
-        if (!$user) {
+        if (!$user || $user->getReseller() !== $this->security->getUser()) {
             throw new Exception\NotFoundHttpException('Cannot access, User not found');
-        }
-
-        if ($user->getReseller() !== $this->security->getUser()) {
-            throw new Exception\AccessDeniedHttpException('Access denied, User is not yours');
         }
 
         $request->attributes->set($configuration->getName(), $user);
