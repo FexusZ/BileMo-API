@@ -9,13 +9,13 @@ use App\Entity\User;
 use App\Service\Paginate;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
-use FOS\RestBundle\Controller\AbstractFOSRestController;
+use FOS\RestBundle\Context\Context;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use OpenApi\Annotations as OA;
 
-class UserController extends AbstractFOSRestController
+class UserController extends AbstractController
 {
     /**
      * @Rest\Get("/api/users", name="user.list")
@@ -99,10 +99,24 @@ class UserController extends AbstractFOSRestController
      */
     public function userList(Request $request, Paginate $paginator)
     {
-        return $paginator->paginate(
-            $this->getDoctrine()->getRepository('App:User')->findBy(['reseller' => $this->getUser()->getId()]),
-            $request
+
+        $view = $this->view(
+            $paginator->paginate(
+                $this->getDoctrine()->getRepository('App:User')->findBy(['reseller' => $this->getUser()->getId()]),
+                $request
+            ),
+            200
         );
+        $context = new Context();
+        $context->addGroup('user:list');
+
+        $view->setContext($context);
+        
+        $handler = $this->get('fos_rest.view_handler');
+        $response = $handler->handle($view)
+            ->setMaxAge(3600);
+
+        return $response;
     }
 
     /**
@@ -172,7 +186,20 @@ class UserController extends AbstractFOSRestController
      */
     public function userDetail(User $user, Request $request)
     {
-        return $user;
+        $view = $this->view(
+            $user,
+            200
+        );
+        $context = new Context();
+        $context->addGroup('user:details');
+
+        $view->setContext($context);
+        
+        $handler = $this->get('fos_rest.view_handler');
+        $response = $handler->handle($view)
+            ->setMaxAge(3600);
+
+        return $response;
     }
 
     /**

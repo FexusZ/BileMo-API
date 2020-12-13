@@ -7,14 +7,14 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 use App\Entity\Reseller;
 
-use FOS\RestBundle\Controller\AbstractFOSRestController;
 use FOS\RestBundle\Controller\Annotations as Rest; 
+use FOS\RestBundle\Context\Context;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use OpenApi\Annotations as OA;
 
-class ResellerController extends AbstractFOSRestController
+class ResellerController extends AbstractController
 {
     /**
      * @Rest\Get("/api/reseller", name="reseller.details")
@@ -60,7 +60,22 @@ class ResellerController extends AbstractFOSRestController
      */
     public function resellerInfo()
     {
-    	return $this->getUser();
+
+        $view = $this->view(
+            $this->getUser(),
+            200
+        );
+        $context = new Context();
+        $context->addGroup('reseller:details');
+
+        $view->setContext($context);
+        
+        $handler = $this->get('fos_rest.view_handler');
+        $response = $handler->handle($view)
+            ->setMaxAge(3600);
+
+        return $response;
+    	// return $this->getUser();
     }
 
     /**

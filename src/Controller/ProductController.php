@@ -8,6 +8,7 @@ use App\Entity\Product;
 use App\Service\Paginate;
 
 use FOS\RestBundle\Controller\Annotations as Rest;
+use FOS\RestBundle\Context\Context;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
@@ -92,10 +93,23 @@ class ProductController extends AbstractController
      */
     public function productList(Request $request, Paginate $paginator)
     {
-        return $paginator->paginate(
-            $this->getDoctrine()->getRepository('App:Product')->findAll(),
-            $request
+        $view = $this->view(
+            $paginator->paginate(
+                $this->getDoctrine()->getRepository('App:Product')->findAll(),
+                $request
+            ),
+            200
         );
+        $context = new Context();
+        $context->addGroup('product:list');
+
+        $view->setContext($context);
+
+        $handler = $this->get('fos_rest.view_handler');
+        $response = $handler->handle($view)
+            ->setMaxAge(3600);
+
+        return $response;
     }
     
     /**
@@ -155,6 +169,19 @@ class ProductController extends AbstractController
      */
     public function productDetail(Product $product)
     {
-        return $product;
+        $view = $this->view(
+            $product,
+            200
+        );
+        $context = new Context();
+        $context->addGroup('product:details');
+
+        $view->setContext($context);
+
+        $handler = $this->get('fos_rest.view_handler');
+        $response = $handler->handle($view)
+            ->setMaxAge(3600);
+
+        return $response;
     }
 }
