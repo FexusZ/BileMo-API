@@ -32,6 +32,8 @@ Réalisation d'une API REST PHP/Symfony (BileMo)
 	* Modifier le fichier .env pour y mettre les informations de connexion à la base de données
 	* Mettre en place la base de données :
 		* Par ligne de commande, passer le serveur en mode développeur pour acceder au maker de symfony, faite un php bin/console ou symfony console make:migration, puis un doctrine:migrations:migrate, pour avoir un jeu de données de base vous pouvez aussi exécuter la commande "php bin/console doctrine:fixtures:load", vous pouvez repasser en environnement de production.
+### Bundle utilisés
+* ...
 ### Lien codeclimate
 * <a href="https://codeclimate.com/github/FexusZ/BileMo-API/maintainability"><img src="https://api.codeclimate.com/v1/badges/d5132b08cc03eebf2b97/maintainability" /></a>
 ### V.1.0.0
