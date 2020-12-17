@@ -12,7 +12,6 @@ use JMS\Serializer\Annotation as Serializer;
 
 use OpenApi\Annotations as OA;
 
-use JMS\Serializer\Annotation\ExclusionPolicy;
 /**
  * @ORM\Entity(repositoryClass=ProductRepository::class)
  *

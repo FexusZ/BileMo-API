@@ -7,9 +7,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use FOS\RestBundle\View\View;
-/**
- * 
- */
+use Symfony\Component\HttpKernel\Exception;
+
 class Paginate
 {
 	private $container;
@@ -27,12 +26,8 @@ class Paginate
 	{
 		$result = [];
 		$limit = $request->query->getInt('limit', (int) $this->param->get('limit'));
-
 		if (empty($entities)) {
-			return View::create(
-				['error' => 'no data'],
-				404
-			);
+			throw new Exception\NotFoundHttpException('no data');
 		}
 		
 		if ($this->exceedLimit($limit)) {
@@ -51,15 +46,9 @@ class Paginate
 	private function exceedLimit(int $limit)
 	{
 		if ($limit > $this->param->get('limit')) {
-			$this->limit =  View::create(
-				['error' => 'The \'limit\' parameter cannot exceed ' . $this->param->get('limit')],
-				400
-			);
+			throw new Exception\BadRequestHttpException('The \'limit\' parameter cannot exceed ' . $this->param->get('limit'));
 		} elseif ($limit < 1) {
-			$this->limit = View::create(
-				['error' => 'The \'limit\' parameter cannot be less than 1'],
-				400
-			);
+			throw new Exception\BadRequestHttpException('The \'limit\' parameter cannot be less than 1');
 		} else {
 			return false;
 		}
@@ -70,9 +59,8 @@ class Paginate
 	private function getResult($paginator)
 	{
 		if (empty($paginator->getItems())) {
-			return View::create(
-				['error' => 'no data for page n°' . $paginator->getCurrentPageNumber()],
-				404
+			throw new Exception\NotFoundHttpException(
+				'no data for page n°' . $paginator->getCurrentPageNumber()
 			);
 		}
 
