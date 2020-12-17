@@ -36,6 +36,7 @@ Réalisation d'une API REST PHP/Symfony (BileMo)
     * mkdir -p config/jwt
     * $ openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096
     * $ openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout
+    * Plus d'informations <a href="https://github.com/lexik/LexikJWTAuthenticationBundle/blob/master/Resources/doc/index.md#installation">ici</a> 
     
  
 ### Bundle utilisés
