@@ -27,11 +27,19 @@ Réalisation d'une API REST PHP/Symfony (BileMo)
   * PHP 7.4.7, MySQL, Symfony
 ### Comment utiliser le projet ?
 * Installation :
+<<<<<<< HEAD
   * Importer le projet sur votre serveur
   * Telecharger composer, et faite un 'composer install', pour générer le vendor et l'autoloader de composer.
   * Modifier le fichier .env pour y mettre les informations de connexion à la base de données
   * Mettre en place la base de données :
     * Par ligne de commande, passer le serveur en mode développeur pour acceder au maker de symfony, faite un php bin/console ou symfony console make:migration, puis un doctrine:migrations:migrate, pour avoir un jeu de données de base vous pouvez aussi exécuter la commande "php bin/console doctrine:fixtures:load", vous pouvez repasser en environnement de production.
+=======
+	* Importer le projet sur votre serveur
+	* Telecharger composer, et faite un 'composer install', pour générer le vendor et l'autoloader de composer.
+	* Modifier le fichier .env pour y mettre les informations de connexion à la base de données
+	* Mettre en place la base de données :
+		* Par ligne de commande, passer le serveur en mode développeur pour acceder au maker de symfony, faite un php bin/console ou symfony console make:migration, puis un doctrine:migrations:migrate, pour avoir un jeu de données de base vous pouvez aussi exécuter la commande "php bin/console doctrine:fixtures:load", vous pouvez repasser en environnement de production.
+>>>>>>> 706cb0dd5e25f7588ff1fdc52dd8df9300bedbd1
 ### Bundle utilisés
 * ...
 ### Lien codeclimate
