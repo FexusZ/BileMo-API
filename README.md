@@ -27,12 +27,17 @@ Réalisation d'une API REST PHP/Symfony (BileMo)
   * PHP 7.4.7, MySQL, Symfony
 ### Comment utiliser le projet ?
 * Installation :
-
   * Importer le projet sur votre serveur
   * Telecharger composer, et faite un 'composer install', pour générer le vendor et l'autoloader de composer.
   * Modifier le fichier .env pour y mettre les informations de connexion à la base de données
   * Mettre en place la base de données :
     * Par ligne de commande, passer le serveur en mode développeur pour acceder au maker de symfony, faite un php bin/console ou symfony console make:migration, puis un doctrine:migrations:migrate, pour avoir un jeu de données de base vous pouvez aussi exécuter la commande "php bin/console doctrine:fixtures:load", vous pouvez repasser en environnement de production.
+  * Vous devrai aussi mettre en place JWT, pour cela il vous suffira de gerener la clé public et privé, en suivant les instructions et en renseignant pour le PEM pass phrase, les informations que vous avez dans le .env 'JWT_PASSPHRASE' : 
+    * mkdir -p config/jwt
+    * $ openssl genpkey -out config/jwt/private.pem -aes256 -algorithm rsa -pkeyopt rsa_keygen_bits:4096
+    * $ openssl pkey -in config/jwt/private.pem -out config/jwt/public.pem -pubout
+    
+ 
 ### Bundle utilisés
 * FOSRestBundle : Permet de facilité l’intégration de JMS, ainsi que la mise en place d’une API REST.
 * JMSSerializerBundle : Serialiseur compatible avec Hateoas.
